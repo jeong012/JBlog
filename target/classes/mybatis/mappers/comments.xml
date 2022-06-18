@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CommentsXml">
+	<!-- 쿼리문 작성  -->
+	<insert id="insert">
+		<selectKey keyProperty="cmtNo" order="BEFORE" resultType="int">
+			SELECT seq_comments_no.nextval FROM DUAL
+		</selectKey>
+	
+		<![CDATA[
+					INSERT INTO COMMENTS (CMTNO, POSTNO, USERNO, CMTCONTENT, REGDATE)
+					VALUES(#{cmtNo}, #{postNo}, #{userNo}, #{cmtContent}, sysdate)
+		]]>
+  	</insert>
+  	
+  	<select id="getComments" resultType="comments">
+  		<![CDATA[
+		  			SELECT c.CMTNO , c.POSTNO , c.USERNO , u.USERNAME , c.CMTCONTENT , TO_char(c.REGDATE, 'YYYY/MM/DD') regDate
+					FROM COMMENTS c , USERS u 
+					WHERE c.USERNO = u.USERNO 
+					AND c.POSTNO = #{postNo}
+					ORDER BY c.CMTNO DESC
+  		]]>
+  	</select>
+  	
+  	<delete id="delete">
+  		DELETE FROM COMMENTS
+		WHERE CMTNO = #{cmtNo}
+  	</delete>
+  	
+</mapper>
